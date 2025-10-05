@@ -106,26 +106,7 @@ vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper win
 vim.api.nvim_create_user_command('FixLineEndings', ':%s/\\r//ge', { desc = 'Replaces CRLF (Windows) with LF (Unix) line endings.' })
 
 vim.diagnostic.config {
-  --   signs = {
-  --     text = {
-  --       [vim.diagnostic.severity.ERROR] = '󰅚',
-  --       [vim.diagnostic.severity.WARN] = '󰀪',
-  --       [vim.diagnostic.severity.HINT] = '󰌶',
-  --       [vim.diagnostic.severity.INFO] = '',
-  --     },
-  --   },
   float = {
-    --     header = '',
-    --     focusable = true,
-    --     border = 'rounded',
-    --     close_events = {
-    --       'BufLeave',
-    --       'CursorMoved',
-    --       'InsertEnter',
-    --       'FocusLost',
-    --     },
-    --     prefix = '',
-    --     suffix = '',
     format = function(diagnostic)
       if diagnostic.source == 'rustc' and diagnostic.user_data.lsp.data ~= nil then
         return diagnostic.user_data.lsp.data.rendered
@@ -134,9 +115,22 @@ vim.diagnostic.config {
       end
     end,
   },
-  --   virtual_text = false,
-  --   update_in_insert = true,
+  virtual_text = false,
 }
+
+-- See: https://neovim.io/doc/user/diagnostic.html
+-- local virt_lines_ns = vim.api.nvim_create_namespace 'on_diagnostic_jump'
+-- --- @param diagnostic? vim.Diagnostic
+-- --- @param bufnr integer
+-- local function on_jump(diagnostic, bufnr)
+--   if not diagnostic then
+--     print 'not diagnostic'
+--     return
+--   end
+--   print 'yes diagnostic'
+--   vim.diagnostic.show(nil, bufnr, { diagnostic }, { virtual_lines = { current_line = true }, virtual_text = false })
+-- end
+-- vim.diagnostic.config { jump = { on_jump = on_jump } }
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
@@ -872,6 +866,15 @@ require('lazy').setup({
   {
     'sindrets/diffview.nvim',
   },
+  -- {
+  --   'rachartier/tiny-inline-diagnostic.nvim',
+  --   event = 'VeryLazy',
+  --   priority = 1000,
+  --   config = function()
+  --     require('tiny-inline-diagnostic').setup()
+  --     vim.diagnostic.config { virtual_text = false } -- Disable default virtual text
+  --   end,
+  -- },
 
   -- require 'kickstart.plugins.debug',
   -- require 'kickstart.plugins.indent_line',
