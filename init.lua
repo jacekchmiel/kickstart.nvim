@@ -88,12 +88,6 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagn
 -- or just use <C-\><C-n> to exit terminal mode
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 
--- TIP: Disable arrow keys in normal mode
-vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
-vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
-vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
-vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
-
 -- Keybinds to make split navigation easier.
 --  Use CTRL+<hjkl> to switch between windows
 --
@@ -102,38 +96,6 @@ vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left wind
 vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
-
-vim.api.nvim_create_user_command('FixLineEndings', ':%s/\\r//ge', { desc = 'Replaces CRLF (Windows) with LF (Unix) line endings.' })
-
-vim.diagnostic.config {
-  float = {
-    format = function(diagnostic)
-      if diagnostic.source == 'rustc' and diagnostic.user_data.lsp.data ~= nil then
-        return diagnostic.user_data.lsp.data.rendered
-      else
-        return diagnostic.message
-      end
-    end,
-  },
-  virtual_text = false,
-}
-
--- See: https://neovim.io/doc/user/diagnostic.html
--- local virt_lines_ns = vim.api.nvim_create_namespace 'on_diagnostic_jump'
--- --- @param diagnostic? vim.Diagnostic
--- --- @param bufnr integer
--- local function on_jump(diagnostic, bufnr)
---   if not diagnostic then
---     print 'not diagnostic'
---     return
---   end
---   print 'yes diagnostic'
---   vim.diagnostic.show(nil, bufnr, { diagnostic }, { virtual_lines = { current_line = true }, virtual_text = false })
--- end
--- vim.diagnostic.config { jump = { on_jump = on_jump } }
-
--- [[ Basic Autocommands ]]
---  See `:help lua-guide-autocommands`
 
 -- Highlight when yanking (copying) text
 --  Try it with `yap` in normal mode
@@ -866,15 +828,6 @@ require('lazy').setup({
   {
     'sindrets/diffview.nvim',
   },
-  -- {
-  --   'rachartier/tiny-inline-diagnostic.nvim',
-  --   event = 'VeryLazy',
-  --   priority = 1000,
-  --   config = function()
-  --     require('tiny-inline-diagnostic').setup()
-  --     vim.diagnostic.config { virtual_text = false } -- Disable default virtual text
-  --   end,
-  -- },
 
   -- require 'kickstart.plugins.debug',
   -- require 'kickstart.plugins.indent_line',
@@ -904,6 +857,23 @@ require('lazy').setup({
     },
   },
 })
+
+-- [[ Custom Configs ]]
+
+vim.api.nvim_create_user_command('FixLineEndings', ':%s/\\r//ge', { desc = 'Replaces CRLF (Windows) with LF (Unix) line endings.' })
+
+vim.diagnostic.config {
+  float = {
+    format = function(diagnostic)
+      if diagnostic.source == 'rustc' and diagnostic.user_data.lsp.data ~= nil then
+        return diagnostic.user_data.lsp.data.rendered
+      else
+        return diagnostic.message
+      end
+    end,
+  },
+  virtual_text = false,
+}
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
