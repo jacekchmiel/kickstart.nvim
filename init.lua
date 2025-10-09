@@ -875,5 +875,8 @@ vim.diagnostic.config {
   virtual_text = false,
 }
 
+-- Recommended setting for auto-session plugin
+vim.o.sessionoptions = 'blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions'
+
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
